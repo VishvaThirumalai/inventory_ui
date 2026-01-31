@@ -2,6 +2,13 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Layout from '../components/layout/Layout';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+
+// Helper function to get API base URL
+const getApiBaseUrl = () => {
+  return process.env.NODE_ENV === 'development' 
+    ? '${getApiBaseUrl()}' 
+    : 'https://inventory-api-m7d5.onrender.com/api';
+};
 import {
   TagIcon,
   PlusIcon,
@@ -253,7 +260,7 @@ const CategoriesPage = () => {
     if (!window.confirm('Are you sure you want to delete this category?')) return;
     
     try {
-      await axios.delete(`http://localhost:5000/api/categories/${id}`);
+      await axios.delete(`${getApiBaseUrl()}/categories/${id}`);
       toast.success('Category deleted successfully');
       fetchCategories(currentPage);
     } catch (error) {
@@ -275,8 +282,8 @@ const CategoriesPage = () => {
     
     try {
       const url = editingCategory 
-        ? `http://localhost:5000/api/categories/${editingCategory.id}`
-        : 'http://localhost:5000/api/categories';
+        ? `${getApiBaseUrl()}/categories/${editingCategory.id}`
+        : `${getApiBaseUrl()}/categories`;
       
       const method = editingCategory ? 'put' : 'post';
       

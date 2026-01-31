@@ -3,6 +3,13 @@ import Layout from '../components/layout/Layout';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+
+// Helper function to get API base URL
+const getApiBaseUrl = () => {
+  return process.env.NODE_ENV === 'development' 
+    ? '${getApiBaseUrl()}' 
+    : 'https://inventory-api-m7d5.onrender.com/api';
+};
 import {
   ChartBarIcon,
   CurrencyDollarIcon,
@@ -78,7 +85,7 @@ const ReportsPage = () => {
   // Fetch categories for filter
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/categories', {
+      const response = await axios.get('${getApiBaseUrl()}/categories', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -92,7 +99,7 @@ const ReportsPage = () => {
   // Fetch products for filter
   const fetchProducts = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/products', {
+      const response = await axios.get('${getApiBaseUrl()}/products', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
@@ -168,7 +175,7 @@ const ReportsPage = () => {
         params.product_id = productFilter;
       }
 
-      const salesResponse = await axios.get('http://localhost:5000/api/sales', {
+      const salesResponse = await axios.get('${getApiBaseUrl()}/sales', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
@@ -189,7 +196,7 @@ const ReportsPage = () => {
         productsParams.id = productFilter;
       }
 
-      const productsResponse = await axios.get('http://localhost:5000/api/products', {
+      const productsResponse = await axios.get('${getApiBaseUrl()}/products', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
@@ -212,7 +219,7 @@ const ReportsPage = () => {
       const inventoryTurnover = totalRevenue > 0 ? totalRevenue / totalInventoryValue : 0;
 
       // Get suppliers data
-      const suppliersResponse = await axios.get('http://localhost:5000/api/suppliers', {
+      const suppliersResponse = await axios.get('${getApiBaseUrl()}/suppliers', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -252,7 +259,7 @@ const ReportsPage = () => {
         params.product_id = productFilter;
       }
 
-      const response = await axios.get('http://localhost:5000/api/sales', {
+      const response = await axios.get('${getApiBaseUrl()}/sales', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
@@ -320,7 +327,7 @@ const ReportsPage = () => {
         params.id = productFilter;
       }
 
-      const response = await axios.get('http://localhost:5000/api/products', {
+      const response = await axios.get('${getApiBaseUrl()}/products', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
@@ -367,7 +374,7 @@ const ReportsPage = () => {
   const fetchRevenueByCategory = async (startDate, endDate) => {
     try {
       // First, get all sales items with product and category information
-      const salesResponse = await axios.get('http://localhost:5000/api/sales', {
+      const salesResponse = await axios.get('${getApiBaseUrl()}/sales', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
@@ -385,7 +392,7 @@ const ReportsPage = () => {
       const categoryRevenue = {};
       
       // Initialize all categories
-      const categoriesResponse = await axios.get('http://localhost:5000/api/categories', {
+      const categoriesResponse = await axios.get('${getApiBaseUrl()}/categories', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -408,7 +415,7 @@ const ReportsPage = () => {
       // Fetch sale items for each sale and calculate revenue by category
       for (const sale of sales) {
         try {
-          const saleItemsResponse = await axios.get(`http://localhost:5000/api/sales/${sale.id}/items`, {
+          const saleItemsResponse = await axios.get(`${getApiBaseUrl()}/sales/${sale.id}/items`, {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
@@ -418,7 +425,7 @@ const ReportsPage = () => {
           
           for (const item of saleItems) {
             // Get product details including category
-            const productResponse = await axios.get(`http://localhost:5000/api/products/${item.product_id}`, {
+            const productResponse = await axios.get(`${getApiBaseUrl()}/products/${item.product_id}`, {
               headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
               }
@@ -451,7 +458,7 @@ const ReportsPage = () => {
       console.error('Error fetching revenue by category:', error);
       // Fallback: try using category_statistics view
       try {
-        const statsResponse = await axios.get('http://localhost:5000/api/category-statistics', {
+        const statsResponse = await axios.get('${getApiBaseUrl()}/category-statistics', {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
@@ -475,7 +482,7 @@ const ReportsPage = () => {
   const fetchTopProducts = async (startDate, endDate) => {
     try {
       // Get sales in the date range
-      const salesResponse = await axios.get('http://localhost:5000/api/sales', {
+      const salesResponse = await axios.get('${getApiBaseUrl()}/sales', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
@@ -492,7 +499,7 @@ const ReportsPage = () => {
       // Collect sales data for all products
       for (const sale of sales) {
         try {
-          const saleItemsResponse = await axios.get(`http://localhost:5000/api/sales/${sale.id}/items`, {
+          const saleItemsResponse = await axios.get(`${getApiBaseUrl()}/sales/${sale.id}/items`, {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
@@ -528,7 +535,7 @@ const ReportsPage = () => {
         .map(p => p.product_id);
       
       if (topProductIds.length > 0) {
-        const productsResponse = await axios.get('http://localhost:5000/api/products', {
+        const productsResponse = await axios.get('${getApiBaseUrl()}/products', {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           },
@@ -562,7 +569,7 @@ const ReportsPage = () => {
         setTopProductsData(topProducts);
       } else {
         // If no sales data, show top products by stock or popularity
-        const productsResponse = await axios.get('http://localhost:5000/api/products', {
+        const productsResponse = await axios.get('${getApiBaseUrl()}/products', {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           },
@@ -590,7 +597,7 @@ const ReportsPage = () => {
   // Fetch supplier performance - UPDATED
   const fetchSupplierPerformance = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/suppliers', {
+      const response = await axios.get('${getApiBaseUrl()}/suppliers', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -601,7 +608,7 @@ const ReportsPage = () => {
       // Get purchase orders for each supplier to calculate performance
       const performanceData = await Promise.all(suppliers.slice(0, 5).map(async (supplier) => {
         try {
-          const ordersResponse = await axios.get('http://localhost:5000/api/purchase-orders', {
+          const ordersResponse = await axios.get('${getApiBaseUrl()}/purchase-orders', {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('token')}`
             },

@@ -84,14 +84,15 @@ const DashboardPage = () => {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
 
+      const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:5000/api' : 'https://inventory-api-m7d5.onrender.com/api';
       const promises = [
-        axios.get('api/dashboard/stats', { headers }),
-        axios.get('api/dashboard/sales/trend', { headers }),
-        axios.get('api/dashboard/products/top-selling?limit=5', { headers }),
-        axios.get('api/dashboard/sales/recent?limit=5', { headers }),
-        axios.get('api/dashboard/revenue-by-category', { headers }),
-        axios.get('api/dashboard/inventory-summary', { headers }),
-        axios.get('api/dashboard/supplier-performance', { headers })
+        axios.get(`${baseUrl}/dashboard/stats`, { headers }),
+        axios.get(`${baseUrl}/dashboard/sales/trend`, { headers }),
+        axios.get(`${baseUrl}/dashboard/products/top-selling?limit=5`, { headers }),
+        axios.get(`${baseUrl}/dashboard/sales/recent?limit=5`, { headers }),
+        axios.get(`${baseUrl}/dashboard/revenue-by-category`, { headers }),
+        axios.get(`${baseUrl}/dashboard/inventory-summary`, { headers }),
+        axios.get(`${baseUrl}/dashboard/supplier-performance`, { headers })
       ];
 
       const responses = await Promise.allSettled(promises);

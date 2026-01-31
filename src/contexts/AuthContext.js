@@ -1,12 +1,10 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import { getApiBaseUrl } from '../config';
 
 const AuthContext = createContext({});
 export const useAuth = () => useContext(AuthContext);
-
-// FIXED: Update API URL to your Render backend
-const API_URL = process.env.REACT_APP_API_URL || 'https://inventory-api-m7d5.onrender.com/api';
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -15,8 +13,8 @@ export const AuthProvider = ({ children }) => {
 
   // Configure axios defaults
   useEffect(() => {
-    // Set base URL for all requests
-    axios.defaults.baseURL = 'https://inventory-api-m7d5.onrender.com';
+    // Set base URL for all requests using config
+    axios.defaults.baseURL = getApiBaseUrl();
     
     // Set authorization header if token exists
     if (token) {

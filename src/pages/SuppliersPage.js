@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Layout from '../components/layout/Layout';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+
+// Helper function to get API base URL
+const getApiBaseUrl = () => {
+  return process.env.NODE_ENV === 'development' 
+    ? '${getApiBaseUrl()}' 
+    : 'https://inventory-api-m7d5.onrender.com/api';
+};
 import {
   BuildingStorefrontIcon,
   PlusIcon,
@@ -40,7 +47,7 @@ const SuppliersPage = () => {
   const fetchSuppliers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:5000/api/suppliers');
+      const response = await axios.get(`${getApiBaseUrl()}/suppliers`);
       setSuppliers(response.data.data || []);
     } catch (error) {
       console.error('Error fetching suppliers:', error);
@@ -83,7 +90,7 @@ const SuppliersPage = () => {
     if (!window.confirm('Are you sure you want to delete this supplier?')) return;
     
     try {
-      await axios.delete(`http://localhost:5000/api/suppliers/${id}`);
+      await axios.delete(`${getApiBaseUrl()}/suppliers/${id}`);
       toast.success('Supplier deleted successfully');
       fetchSuppliers();
     } catch (error) {
@@ -106,8 +113,8 @@ const SuppliersPage = () => {
     
     try {
       const url = editingSupplier 
-        ? `http://localhost:5000/api/suppliers/${editingSupplier.id}`
-        : 'http://localhost:5000/api/suppliers';
+        ? `${getApiBaseUrl()}/suppliers/${editingSupplier.id}`
+        : `${getApiBaseUrl()}/suppliers`;
       
       const method = editingSupplier ? 'put' : 'post';
       

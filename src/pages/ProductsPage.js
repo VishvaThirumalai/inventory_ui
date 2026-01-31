@@ -3,6 +3,13 @@ import Layout from '../components/layout/Layout';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+
+// Helper function to get API base URL
+const getApiBaseUrl = () => {
+  return process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:5000/api' 
+    : 'https://inventory-api-m7d5.onrender.com/api';
+};
 import {
   PlusIcon,
   PencilIcon,
@@ -65,7 +72,8 @@ const ProductsPage = () => {
   const fetchCategories = async () => {
     try {
       setCategoriesLoading(true);
-      const response = await axios.get('http://localhost:5000/api/categories', {
+      const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:5000/api' : 'https://inventory-api-m7d5.onrender.com/api';
+      const response = await axios.get(`${baseUrl}/categories`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -83,7 +91,8 @@ const ProductsPage = () => {
   const fetchSuppliers = async () => {
     try {
       setSuppliersLoading(true);
-      const response = await axios.get('http://localhost:5000/api/suppliers', {
+      const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:5000/api' : 'https://inventory-api-m7d5.onrender.com/api';
+      const response = await axios.get(`${baseUrl}/suppliers`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -128,7 +137,8 @@ const ProductsPage = () => {
     params.append('limit', itemsPerPage);
     
     // Fetch products WITH filters from backend
-    const url = `http://localhost:5000/api/products?${params.toString()}`;
+    const baseUrl = getApiBaseUrl();
+    const url = `${baseUrl}/products?${params.toString()}`;
     console.log('Fetching from:', url);
     
     const response = await axios.get(url, {
@@ -290,7 +300,8 @@ useEffect(() => {
     if (!window.confirm('Are you sure you want to delete this product?')) return;
     
     try {
-      await axios.delete(`http://localhost:5000/api/products/${id}`, {
+      const baseUrl = getApiBaseUrl();
+      await axios.delete(`${baseUrl}/products/${id}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -347,9 +358,10 @@ useEffect(() => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const baseUrl = getApiBaseUrl();
       const url = editingProduct 
-        ? `http://localhost:5000/api/products/${editingProduct.id}`
-        : 'http://localhost:5000/api/products';
+        ? `${baseUrl}/products/${editingProduct.id}`
+        : `${baseUrl}/products`;
       
       const method = editingProduct ? 'put' : 'post';
       
@@ -416,7 +428,8 @@ useEffect(() => {
     }
 
     try {
-      await axios.put(`http://localhost:5000/api/products/${selectedProductForStock.id}/stock`, 
+      const baseUrl = getApiBaseUrl();
+      await axios.put(`${baseUrl}/products/${selectedProductForStock.id}/stock`, 
         { quantity: parseInt(stockQuantity) },
         {
           headers: {

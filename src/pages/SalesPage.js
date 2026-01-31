@@ -3,6 +3,13 @@ import Layout from '../components/layout/Layout';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+
+// Helper function to get API base URL
+const getApiBaseUrl = () => {
+  return process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:5000/api' 
+    : 'https://inventory-api-m7d5.onrender.com/api';
+};
 import {
   PlusIcon,
   CurrencyDollarIcon,
@@ -84,7 +91,7 @@ const SalesPage = () => {
       if (dateRange.start) params.startDate = dateRange.start;
       if (dateRange.end) params.endDate = dateRange.end;
 
-      const response = await axios.get('http://localhost:5000/api/sales', {
+      const response = await axios.get(`${getApiBaseUrl()}/sales`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
@@ -123,7 +130,7 @@ const SalesPage = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/products', {
+      const response = await axios.get(`${getApiBaseUrl()}/products`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
@@ -179,7 +186,7 @@ const SalesPage = () => {
     if (!window.confirm('Are you sure you want to cancel this sale? Stock will be restored.')) return;
     
     try {
-      await axios.put(`http://localhost:5000/api/sales/${saleId}/cancel`, {}, {
+      await axios.put(`${getApiBaseUrl()}/sales/${saleId}/cancel`, {}, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -197,7 +204,7 @@ const SalesPage = () => {
     if (!window.confirm('Are you sure you want to refund this sale? Stock will be restored.')) return;
     
     try {
-      await axios.put(`http://localhost:5000/api/sales/${saleId}/refund`, {
+      await axios.put(`${getApiBaseUrl()}/sales/${saleId}/refund`, {
         notes: 'Refund requested by user'
       }, {
         headers: {
@@ -229,7 +236,7 @@ const SalesPage = () => {
     }
     
     try {
-      const response = await axios.put(`http://localhost:5000/api/sales/${saleToComplete.id}/complete`, {
+      const response = await axios.put(`${getApiBaseUrl()}/sales/${saleToComplete.id}/complete`, {
         amount_paid: parseFloat(paymentAmount),
         payment_method: saleToComplete.payment_method
       }, {
@@ -374,7 +381,7 @@ const SalesPage = () => {
         tax_rate: paymentInfo.taxRate
       };
       
-      const response = await axios.post('http://localhost:5000/api/sales', saleData, {
+      const response = await axios.post(`${getApiBaseUrl()}/sales`, saleData, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -412,7 +419,7 @@ const SalesPage = () => {
 
   const handleViewSale = async (sale) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/sales/${sale.id}`, {
+      const response = await axios.get(`${getApiBaseUrl()}/sales/${sale.id}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
