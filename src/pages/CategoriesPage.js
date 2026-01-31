@@ -53,7 +53,7 @@ const CategoriesPage = () => {
   const fetchCategories = async (page = 1) => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:5000/api/categories', {
+      const response = await axios.get('api/categories', {
         params: { withCounts: 'true' }
       });
       

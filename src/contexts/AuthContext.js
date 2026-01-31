@@ -1,21 +1,42 @@
-﻿import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
 const AuthContext = createContext({});
 export const useAuth = () => useContext(AuthContext);
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// FIXED: Update API URL to your Render backend
+const API_URL = process.env.REACT_APP_API_URL || 'https://inventory-api-m7d5.onrender.com/api';
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
+  // Configure axios defaults
   useEffect(() => {
+    // Set base URL for all requests
+    axios.defaults.baseURL = 'https://inventory-api-m7d5.onrender.com';
+    
+    // Set authorization header if token exists
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     }
+    
+    // Set default headers
+    axios.defaults.headers.common['Content-Type'] = 'application/json';
+    
+    // Add response interceptor for error handling
+    axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401) {
+          toast.error('Session expired. Please login again.');
+          logout();
+        }
+        return Promise.reject(error);
+      }
+    );
   }, [token]);
 
   useEffect(() => {
@@ -28,11 +49,13 @@ export const AuthProvider = ({ children }) => {
 
   const getUserProfile = async () => {
     try {
-      const response = await axios.get(`${API_URL}/auth/me`);
+      const response = await axios.get('/api/auth/me');
       setUser(response.data.user);
     } catch (error) {
       console.error('Failed to get user profile:', error);
-      logout();
+      if (error.response?.status === 401) {
+        logout();
+      }
     } finally {
       setLoading(false);
     }
@@ -41,7 +64,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       setLoading(true);
-      const response = await axios.post(`${API_URL}/auth/register`, userData);
+      const response = await axios.post('/api/auth/register', userData);
       toast.success('Registration successful! Please login.');
       return { success: true, data: response.data };
     } catch (error) {
@@ -56,7 +79,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       setLoading(true);
-      const response = await axios.post(`${API_URL}/auth/login`, { email, password });
+      const response = await axios.post('/api/auth/login', { email, password });
       const { token, user } = response.data;
       
       localStorage.setItem('token', token);
@@ -86,7 +109,7 @@ export const AuthProvider = ({ children }) => {
   const updatePassword = async (currentPassword, newPassword) => {
     try {
       setLoading(true);
-      const response = await axios.put(`${API_URL}/auth/update-password`, {
+      const response = await axios.put('/api/auth/update-password', {
         currentPassword,
         newPassword
       });
@@ -104,7 +127,7 @@ export const AuthProvider = ({ children }) => {
   const forgotPassword = async (email) => {
     try {
       setLoading(true);
-      const response = await axios.post(`${API_URL}/auth/forgot-password`, { email });
+      const response = await axios.post('/api/auth/forgot-password', { email });
       toast.success(response.data.message);
       return { success: true, data: response.data };
     } catch (error) {
@@ -119,7 +142,7 @@ export const AuthProvider = ({ children }) => {
   const resetPassword = async (token, password) => {
     try {
       setLoading(true);
-      const response = await axios.post(`${API_URL}/auth/reset-password/${token}`, { password });
+      const response = await axios.post(`/api/auth/reset-password/${token}`, { password });
       toast.success(response.data.message);
       return { success: true, data: response.data };
     } catch (error) {

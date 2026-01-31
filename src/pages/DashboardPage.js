@@ -85,13 +85,13 @@ const DashboardPage = () => {
       const headers = { Authorization: `Bearer ${token}` };
 
       const promises = [
-        axios.get('http://localhost:5000/api/dashboard/stats', { headers }),
-        axios.get('http://localhost:5000/api/dashboard/sales/trend', { headers }),
-        axios.get('http://localhost:5000/api/dashboard/products/top-selling?limit=5', { headers }),
-        axios.get('http://localhost:5000/api/dashboard/sales/recent?limit=5', { headers }),
-        axios.get('http://localhost:5000/api/dashboard/revenue-by-category', { headers }),
-        axios.get('http://localhost:5000/api/dashboard/inventory-summary', { headers }),
-        axios.get('http://localhost:5000/api/dashboard/supplier-performance', { headers })
+        axios.get('api/dashboard/stats', { headers }),
+        axios.get('api/dashboard/sales/trend', { headers }),
+        axios.get('api/dashboard/products/top-selling?limit=5', { headers }),
+        axios.get('api/dashboard/sales/recent?limit=5', { headers }),
+        axios.get('api/dashboard/revenue-by-category', { headers }),
+        axios.get('api/dashboard/inventory-summary', { headers }),
+        axios.get('api/dashboard/supplier-performance', { headers })
       ];
 
       const responses = await Promise.allSettled(promises);
