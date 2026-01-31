@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }) => {
 
   const getUserProfile = async () => {
     try {
-      const response = await axios.get('/api/auth/me');
+      const response = await axios.get('/auth/me');
       setUser(response.data.user);
     } catch (error) {
       console.error('Failed to get user profile:', error);
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       setLoading(true);
-      const response = await axios.post('/api/auth/register', userData);
+      const response = await axios.post('/auth/register', userData);
       toast.success('Registration successful! Please login.');
       return { success: true, data: response.data };
     } catch (error) {
@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       setLoading(true);
-      const response = await axios.post('/api/auth/login', { email, password });
+      const response = await axios.post('/auth/login', { email, password });
       const { token, user } = response.data;
       
       localStorage.setItem('token', token);
@@ -107,7 +107,7 @@ export const AuthProvider = ({ children }) => {
   const updatePassword = async (currentPassword, newPassword) => {
     try {
       setLoading(true);
-      const response = await axios.put('/api/auth/update-password', {
+      const response = await axios.put('/auth/update-password', {
         currentPassword,
         newPassword
       });
@@ -125,7 +125,7 @@ export const AuthProvider = ({ children }) => {
   const forgotPassword = async (email) => {
     try {
       setLoading(true);
-      const response = await axios.post('/api/auth/forgot-password', { email });
+      const response = await axios.post('/auth/forgot-password', { email });
       toast.success(response.data.message);
       return { success: true, data: response.data };
     } catch (error) {
@@ -140,7 +140,7 @@ export const AuthProvider = ({ children }) => {
   const resetPassword = async (token, password) => {
     try {
       setLoading(true);
-      const response = await axios.post(`/api/auth/reset-password/${token}`, { password });
+      const response = await axios.post(`/auth/reset-password/${token}`, { password });
       toast.success(response.data.message);
       return { success: true, data: response.data };
     } catch (error) {
