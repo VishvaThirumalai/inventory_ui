@@ -2,13 +2,6 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Layout from '../components/layout/Layout';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-
-// Helper function to get API base URL
-const getApiBaseUrl = () => {
-  return process.env.NODE_ENV === 'development' 
-    ? '${getApiBaseUrl()}' 
-    : 'https://inventory-api-m7d5.onrender.com/api';
-};
 import {
   TagIcon,
   PlusIcon,
@@ -20,6 +13,13 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon
 } from '@heroicons/react/24/outline';
+
+// Helper function to get API base URL
+const getApiBaseUrl = () => {
+  return process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:5000/api' 
+    : 'https://inventory-api-m7d5.onrender.com/api';
+};
 
 const CategoriesPage = () => {
   const [categories, setCategories] = useState([]);
@@ -60,8 +60,11 @@ const CategoriesPage = () => {
   const fetchCategories = async (page = 1) => {
     try {
       setLoading(true);
-      const response = await axios.get('api/categories', {
-        params: { withCounts: 'true' }
+      const response = await axios.get(`${getApiBaseUrl()}/categories`, {
+        params: { withCounts: 'true' },
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
       });
       
       const allCategories = response.data.data || [];

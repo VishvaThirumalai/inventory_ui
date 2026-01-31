@@ -3,13 +3,6 @@ import Layout from '../components/layout/Layout';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-
-// Helper function to get API base URL
-const getApiBaseUrl = () => {
-  return process.env.NODE_ENV === 'development' 
-    ? 'http://localhost:5000/api' 
-    : 'https://inventory-api-m7d5.onrender.com/api';
-};
 import {
   PlusIcon,
   PencilIcon,
@@ -25,6 +18,13 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon
 } from '@heroicons/react/24/outline';
+
+// Helper function to get API base URL
+const getApiBaseUrl = () => {
+  return process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:5000/api' 
+    : 'https://inventory-api-m7d5.onrender.com/api';
+};
 
 const ProductsPage = () => {
   const { user } = useAuth();
@@ -72,8 +72,7 @@ const ProductsPage = () => {
   const fetchCategories = async () => {
     try {
       setCategoriesLoading(true);
-      const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:5000/api' : 'https://inventory-api-m7d5.onrender.com/api';
-      const response = await axios.get(`${baseUrl}/categories`, {
+      const response = await axios.get(`${getApiBaseUrl()}/categories`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -91,8 +90,7 @@ const ProductsPage = () => {
   const fetchSuppliers = async () => {
     try {
       setSuppliersLoading(true);
-      const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:5000/api' : 'https://inventory-api-m7d5.onrender.com/api';
-      const response = await axios.get(`${baseUrl}/suppliers`, {
+      const response = await axios.get(`${getApiBaseUrl()}/suppliers`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
