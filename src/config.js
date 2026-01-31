@@ -3,7 +3,7 @@
 // Development/Production configuration
 const config = {
   // API Base URL - Change this to your deployed backend URL
-  API_BASE_URL: process.env.REACT_APP_API_URL || 'https://your-backend-app.onrender.com/api',
+  API_BASE_URL: process.env.REACT_APP_API_URL || 'https://inventory-api-m7d5.onrender.com/api',
   
   // App configuration
   APP_NAME: 'Inventory Management System',
